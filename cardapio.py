@@ -20,7 +20,7 @@ class RestaurantMenu(tk.Tk):
     def __init__(self):
         super().__init__()
 
-        self.title("Restaurante Delícia")
+        self.title("Dreams Doces Doceria")
         self.geometry("400x600")
         self.configure(bg="#F3F4F6")
 
@@ -50,14 +50,14 @@ class RestaurantMenu(tk.Tk):
 
     def create_widgets(self):
         # Header
-        header = tk.Frame(self, bg="#DC2626", pady=10)
+        header = tk.Frame(self, bg="#FFC0CB", pady=10)
         header.pack(fill=tk.X)
 
-        title = tk.Label(header, text="Restaurante Delícia", font=("Arial", 16, "bold"), bg="#DC2626", fg="white")
+        title = tk.Label(header, text="Dreams Doces Doceria", font=("Arial", 16, "bold"), bg="#FFC0CB", fg="white")
         title.pack(side=tk.LEFT, padx=10)
 
         # Adicionar botão de histórico
-        history_button = tk.Button(header, text="Histórico", bg="white", fg="#DC2626", font=("Arial", 12), padx=10, pady=5, command=self.open_history)
+        history_button = tk.Button(header, text="Histórico", bg="white", fg="#FFC0CB", font=("Arial", 12), padx=10, pady=5, command=self.open_history)
         history_button.pack(side=tk.RIGHT, padx=10)
 
         # Main content
@@ -91,7 +91,7 @@ class RestaurantMenu(tk.Tk):
         self.total_items_label = tk.Label(footer, text="Total de itens: 0", font=("Arial", 12, "bold"), bg="white")
         self.total_items_label.pack(side=tk.LEFT, padx=10)
 
-        view_cart_button = tk.Button(footer, text="Ver carrinho", bg="#DC2626", fg="white", font=("Arial", 12), padx=10, pady=5, command=self.open_cart)
+        view_cart_button = tk.Button(footer, text="Ver carrinho", bg="#FFC0CB", fg="white", font=("Arial", 12), padx=10, pady=5, command=self.open_cart)
         view_cart_button.pack(side=tk.RIGHT, padx=10)
 
     def create_menu_item_widget(self, parent, item):
