@@ -3,7 +3,8 @@ from tkinter import ttk
 from PIL import Image, ImageTk
 import os
 from dotenv import load_dotenv
-from db import db_conectar, db_listarprodutos, db_listarpedidos
+from db import db_conectar, db_listarprodutos, db_listarpedidos, db_inserirpedido
+from datetime import datetime
 
 # Carrega as variáveis de ambiente do arquivo .env
 load_dotenv()
@@ -38,7 +39,7 @@ class RestaurantMenu(tk.Tk):
         self.cart_items = {}
         self.payment_methods = ["Cartão de Crédito", "Cartão de Débito", "Pix", "Dinheiro"]
 
-        # Adicionar histórico de pedidos fictício
+        # Adicionar histórico de pedidos
         self.order_history = db_listarpedidos()
 
         # Estabelecer conexão com o banco de dados
@@ -193,14 +194,42 @@ class RestaurantMenu(tk.Tk):
         finish_button.pack(pady=20)
 
     def finish_purchase(self, cart_window):
+        # Calcular o total do pedido
+        total_price = sum(int(self.cart_items[item.id].get()) * item.price for item in self.menu_items)
+        
+        # Criar a descrição do pedido
+        descricao = ", ".join([f"{item.name} x{self.cart_items[item.id].get()}" for item in self.menu_items if int(self.cart_items[item.id].get()) > 0])
+        
+        # Obter a data e hora atuais
+        data_atual = datetime.now()
+        
+        # Inserir o pedido no banco de dados
+        sucesso = db_inserirpedido(data_atual, total_price, descricao)
+        self.order_history = db_listarpedidos()
+        
         cart_window.destroy()
-        success_window = tk.Toplevel(self)
-        success_window.title("Compra Concluída")
-        success_window.geometry("300x150")
-        success_window.configure(bg="#F3F4F6")
+        
+        if sucesso:
+            success_window = tk.Toplevel(self)
+            success_window.title("Compra Concluída")
+            success_window.geometry("300x150")
+            success_window.configure(bg="#F3F4F6")
 
-        tk.Label(success_window, text="Compra realizada com sucesso!", bg="#F3F4F6", font=("Arial", 14, "bold")).pack(pady=20)
-        tk.Button(success_window, text="OK", bg="#DC2626", fg="white", font=("Arial", 12), command=success_window.destroy).pack()
+            tk.Label(success_window, text="Compra realizada com sucesso!", bg="#F3F4F6", font=("Arial", 14, "bold")).pack(pady=20)
+            tk.Button(success_window, text="OK", bg="#DC2626", fg="white", font=("Arial", 12), command=success_window.destroy).pack()
+            
+            # Limpar o carrinho após a compra bem-sucedida
+            for item_id in self.cart_items:
+                self.cart_items[item_id].set("0")
+            self.update_total_items()
+        else:
+            error_window = tk.Toplevel(self)
+            error_window.title("Erro na Compra")
+            error_window.geometry("300x150")
+            error_window.configure(bg="#F3F4F6")
+
+            tk.Label(error_window, text="Erro ao finalizar a compra.", bg="#F3F4F6", font=("Arial", 14, "bold")).pack(pady=20)
+            tk.Button(error_window, text="OK", bg="#DC2626", fg="white", font=("Arial", 12), command=error_window.destroy).pack()
 
     def open_history(self):
         history_window = tk.Toplevel(self)

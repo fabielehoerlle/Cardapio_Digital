@@ -81,6 +81,22 @@ def db_listarpedidos():
             return None
     return None
 
+def db_inserirpedido(data, total, descricao):
+    conexao = db_conectar()
+    if conexao:
+        try:
+            cursor = conexao.cursor()
+            cursor.execute("INSERT INTO pedidos (data, total, descricao) VALUES (%s, %s, %s)", (data, total, descricao))
+            conexao.commit()
+            cursor.close()
+            conexao.close()
+            print("Pedido inserido com sucesso!")
+            return True
+        except (Exception, psycopg2.Error) as erro:
+            print(f"Erro ao inserir pedido: {erro}")
+            return False
+    return False
+
 
 # Exemplo de uso da função
 if __name__ == "__main__":
